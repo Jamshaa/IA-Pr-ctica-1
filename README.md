@@ -1,1 +1,1 @@
-# IA-Pr-ctica-1
+# IA-Practica-1
