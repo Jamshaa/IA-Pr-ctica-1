@@ -98,13 +98,36 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
 
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.Queue()
+    directions = []
+    visited_states = []
 
+    #Add start
+    get_start = problem.getStartState()
+    fringe.push( (get_start, []) )
+    visited_states.append(get_start)
+
+    while not fringe.isEmpty():
+        
+        get_state_xy, directions = fringe.pop()
+
+        if problem.isGoalState(get_state_xy):
+            return directions
+
+        else:
+            for successor, direction, cost in problem.getSuccessors(get_state_xy):
+                # Track visited states
+                if not successor in visited_states:
+                    visited_states.append(successor)
+                    fringe.push((successor, directions + [direction]))
+                    #print(directions)        
+    return []
+    util.raiseNotDefined()
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
@@ -120,7 +143,34 @@ def nullHeuristic(state, problem=None) -> float:
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    fringe = util.PriorityQueue()
+    start_node = problem.getStartState()
+    start_heuristic = heuristic(start_node, problem)
+    visited_nodes = []
+    fringe.push( (start_node, [], 0), start_heuristic)
+    directions = []
+    while not fringe.isEmpty():
+        get_xy, directions, get_cost = fringe.pop()
+
+        if problem.isGoalState(get_xy):
+            return directions
+        
+        if not get_xy in visited_nodes:
+            # Track visited_nodes
+            visited_nodes.append(get_xy)
+            
+            for coordinates, direction, successor_cost in problem.getSuccessors(get_xy):
+                if not coordinates in visited_nodes:
+                    # Pass by reference
+                    actions_list = list(directions)
+                    actions_list += [direction]
+                    # Get cost so far
+                    cost_actions = problem.getCostOfActions(actions_list)
+                    get_heuristic = heuristic(coordinates, problem)
+                    fringe.push( (coordinates, actions_list, 1), cost_actions + get_heuristic)
+    return []
     util.raiseNotDefined()
+
 
 # Abbreviations
 bfs = breadthFirstSearch
